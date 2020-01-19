@@ -1,0 +1,37 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>系统配置{:lang('list')}</legend>
+    </fieldset>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+<script type="text/html" id="action">
+    <a href="{:url('configedit')}?id={{d.id}}" class="layui-btn layui-btn-xs">编辑</a>
+</script>
+
+{include file="common/foot"/}
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var tableIn = table.render({
+            id: 'user',
+            elem: '#list',
+            url: '{:url("config")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true,sort:true,templet:'#zizeng'},
+                {field: 'name', title: '配置名称', width: 160},
+                {field: 'value', title: '配置值', width: 160},
+//                {field: 'inc_type', title: '配置分组', width: 160},
+                {field: 'desc', title: '描述', width: 500},
+                {width: 100, align: 'center', toolbar: '#action'}
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{include file="common/head"/}
+	<div class="layui-form-item" >
+		<label class="layui-form-label">导入专线</label>
+		<div class="layui-input-inline">
+			<div class="layui-upload">
+				<button type="button" name="file" class="layui-btn" id="myfile"><i class="layui-icon"></i>上传文件</button>
+			</div>
+		</div>
+	</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script type="text/javascript">
+
+    layui.use(['form','upload'],function(){
+
+        var form=layui.form;
+
+        var upload=layui.upload;
+
+        upload.render({ //允许上传的文件后缀
+
+            elem: '#myfile'
+
+            ,url: "{:url('daoru')}"
+
+            ,accept: 'file' //普通文件
+
+            ,exts: 'xls|xlsx' //只允许上传压缩文件
+
+            ,done: function(res){
+
+                if(res.code==1){
+
+                    layer.msg('上传成功,已解析数据',{icon:6});
+
+                
+
+                }else{
+
+                    layer.msg('解析失败',{icon:5});
+
+                }
+
+            }
+
+        });
+
+       
+
+    })
+
+</script>

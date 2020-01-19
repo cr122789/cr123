@@ -1,0 +1,381 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+/*    #container{
+        width:200px;
+        height:200px;
+        border:1px solid #9d9d9d;
+        border-radius: 6px;
+        margin:50px auto;
+        position: relative;
+        overflow: hidden;
+    }
+    .upload-progress{
+        width:100%;
+        height:100%;
+        position: absolute;
+        top:0;
+        left:0;
+        background: rgba(0,0,0,0.5);
+        z-index: 5;
+        color:#fff;
+        line-height: 200px;
+        text-align: center;
+        display: none;
+    }
+    #uploadImage{
+        width:100%;
+        height:100%;
+        position: absolute;
+        top:0;
+        left:0;
+        z-index: 2;
+        text-align: center;
+        line-height: 200px;
+        cursor: pointer;
+    }
+    #container img{
+        width:100%;
+        position: absolute;
+        top:0;
+        left:0;
+        z-index: 1;
+    }*/
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane" lay-filter="form"  enctype="multipart/form-data">
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程名称</label>
+            <div class="layui-input-4">
+                <input type="text" name="title" ng-model="field.title" lay-verify="required" placeholder="{:lang('pleaseEnter')}课程名称" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                名称在30个字符之间。
+            </div>
+        </div>
+       <div class="layui-form-item">
+            <label class="layui-form-label">所属类型</label>
+            <div class="layui-input-4">
+                <select name="type_id" lay-verify="required">
+                    <option value="">请选择所属类型</option>
+                    {volist name="type" id="vo"}
+                    <option value="{$vo.id}">{$vo.type}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">讲师</label>
+            <div class="layui-input-4">
+                <select name="teacher_id" lay-verify="required">
+                    <option value="">请选择讲师</option>
+                    {volist name="teacher" id="vo"}
+                    <option value="{$vo.id}">{$vo.teacher_name}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+         <div class="layui-form-item">
+            <label class="layui-form-label">tag标签</label>
+            <div class="layui-input-4">
+                <input type="text" name="tag_id" ng-model="field.tag_id" lay-verify="required" placeholder="{:lang('pleaseEnter')}课程标签" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                标签用‘#’隔开，格式为#标签1#标签2#标签3，标签之前不需要加空格
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程视频</label>
+            <div class="layui-input-4" id="container">
+                <button type="button" class="layui-btn layui-btn-primary" id="pickfiles"><i class="icon icon-upload3"></i>点击上传</button>
+                <button id="uploadfiles" class="layui-btn">上传</button>
+                <div class="upload-progress"></div>
+            </div>
+            <input type="hidden" name="video" id="video" value="{{field.video}}">
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程缩略图</label>
+            <input type="hidden" name="video_img" id="video_img" value="{{field.video_img}}">
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-primary" id="video_imgBtn"><i class="icon icon-upload3"></i>点击上传</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="titleBg">
+                        <p id="demoText" ></p>
+                    </div>
+            </div>
+            </div>
+        </div>
+        
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">课程简介</label>
+            <div class="layui-input-block">
+                <textarea name="introduction" ng-model="field.introduction" placeholder="{:lang('pleaseEnter')}内容" class="layui-textarea" style="width:50%"></textarea>
+            </div>
+        </div>
+       
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">seo标题</label>
+            <div class="layui-input-4">
+                <input type="text" name="seo_title" ng-model="field.seo_title" lay-verify="required" placeholder="{:lang('pleaseEnter')}seo标题" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入50个字符
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">seo关键词</label>
+            <div class="layui-input-4">
+                <input type="text" name="seo_key" ng-model="field.seo_key" lay-verify="required" placeholder="{:lang('pleaseEnter')}seo关键词" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入50个字符
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">seo描述</label>
+            <div class="layui-input-block">
+                <textarea name="seo_des" ng-model="field.seo_des" placeholder="{:lang('pleaseEnter')}seo描述" class="layui-textarea" style="width:50%"></textarea>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入120个字符
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script src="/muke/public/static/common/js/jquery.2.1.1.min.js"></script>
+<script src="//cdn.staticfile.org/plupload/2.1.9/plupload.full.min.js"></script>
+<script src="//cdn.bootcss.com/plupload/2.1.9/i18n/zh_CN.js"></script>
+<script src="/muke/public/static/admin/js/qiniu.js"></script>
+<script>
+    var uploader = Qiniu.uploader({
+    runtimes: 'html5,flash,html4', //上传模式,依次退化
+    browse_button: 'pickfiles', //上传选择的点选按钮，**必需**
+    // uptoken:getTokenMessage().token,
+    uptoken_url: '{:url("UploadQiniu/token")}', //Ajax请求upToken的Url，**强烈建议设置**（服务端提供）
+    // uptoken : '', //若未指定uptoken_url,则必须指定 uptoken ,uptoken由其他程序生成
+    // unique_names: true, // 默认 false，key为文件名。若开启该选项，SDK为自动生成上传成功后的key（文件名）。
+    // save_key: true, // 默认 false。若在服务端生成uptoken的上传策略中指定了 `sava_key`，则开启，SDK会忽略对key的处理
+    domain: 'http://video.htlocalservice.com/', //bucket 域名，下载资源时用到，**必需**
+    get_new_uptoken: false, //设置上传文件的时候是否每次都重新获取新的token
+    container: 'container', //上传区域DOM ID，默认是browser_button的父元素，
+    max_file_size: '1024mb', //最大文件体积限制
+    flash_swf_url: 'Moxie.swf', //引入flash,相对路径
+    max_retries: 3, //上传失败最大重试次数
+    dragdrop: true, //开启可拖曳上传
+    drop_element: 'container', //拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
+    chunk_size: '4mb', //分块上传时，每片的体积
+    auto_start: false, //选择文件后自动上传，若关闭需要自己绑定事件触发上传
+    init: {
+            'FilesAdded': function(up, files) {                             // 文件添加进队列后，处理相关的事情
+                plupload.each(files, function(file) {
+                    console.log(file.name)
+                });
+            },
+            'BeforeUpload': function(up, file) {                            // 每个文件上传前，处理相关的事情
+                console.log("开始上传之前");
+                $(".upload-progress").show();
+            },
+            'UploadProgress': function(up, file) {                          // 每个文件上传时，处理相关的事情
+                console.log("上传中");
+                $(".upload-progress").html("上传进度:"+file.percent + "%");
+            },
+            'FileUploaded': function(up, file, info) {                       // 每个文件上传成功后，处理相关的事情
+                console.log("上传成功");
+                // var domain = 'http://q1zfq0eyx.bkt.clouddn.com/';
+                var sourceLink = '';
+                let a =JSON.parse(info);
+                for(let key in a){
+                    sourceLink=a[key]
+                }
+                domain=sourceLink;
+                console.log(domain,963)
+                $('#video').val(domain);
+                //var sourceLink = domain + info.key; 
+
+            },
+            'Error': function(up, err, errTip) {
+                console.log("上传出错")
+            },
+            'UploadComplete': function() {
+                //队列文件处理完毕后，处理相关的事情
+            },
+            'Key': function(up, file) {
+            // 若想在前端对每个文件的key进行个性化处理，可以配置该函数
+            // 该配置必须要在 unique_names: false , save_key: false 时才生效
+            var timestamp = new Date().getTime();
+            var key = timestamp+".mp4";
+            // do something with key here
+            return key
+            }
+        }
+    
+    
+    });
+
+    // domain 为七牛空间（bucket)对应的域名，选择某个空间后，可通过"空间设置->基本设置->域名设置"查看获取
+
+    // uploader 为一个plupload对象，继承了所有plupload的方法，参考http://plupload.com/docs
+
+
+  
+    document.getElementById('uploadfiles').onclick = function() {
+    uploader.start();
+};
+</script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{id:'',title:''};
+        layui.use(['form', 'layer','upload','element','jquery'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload,element=layui.element;
+            var info = {$info|raw};
+             form.val("form", info);
+            if($scope.field.video_img){
+                titleBg.src = 'http://video.htlocalservice.com/'+$scope.field.video_img;
+            }
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.id = $scope.field.id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+
+            var xhrOnProgress = function (fun) {
+                xhrOnProgress.onprogress = fun; //绑定监听
+                //使用闭包实现监听绑
+                return function () {
+                    //通过$.ajaxSettings.xhr();获得XMLHttpRequest对象
+                    var xhr = $.ajaxSettings.xhr();
+                    //判断监听函数是否为函数
+                    if (typeof xhrOnProgress.onprogress !== 'function')
+                        return xhr;
+                    //如果有监听函数并且xhr对象支持绑定时就把监听函数绑定上去
+                    if (xhrOnProgress.onprogress && xhr.upload) {
+                        xhr.upload.onprogress = xhrOnProgress.onprogress;
+                    }
+                    return xhr;
+                }
+            };
+          //普通图片上传
+            var uploadInst = upload.render({
+                elem: '#video_imgBtn'
+                ,url: '{:url("UploadQiniu/upload")}'
+                ,size:1024000
+                ,exts: 'jpg|png'
+                ,before: function(obj){
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function(index, file, result){
+                        $('#titleBg').attr('src', result); //图片链接（base64）
+                    });
+                },
+                done: function(res){
+                    if(res.code>0){
+                        $url=res.url;
+                        
+                        $('#video_img').val($url);
+                    }else{
+                        //如果上传失败
+                        return layer.msg('上传失败');
+                    }
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                }
+            });
+       
+
+            //协助参演老师名单上传
+            var teacher_list_uploadInst = upload.render({
+                elem: '#teacher_list_Btn'
+                ,url: '{:url("UploadQiniu/upload")}'
+                ,accept:"file"
+                ,multiple: true
+                ,xhr: xhrOnProgress
+                ,size:1024000
+                ,exts: 'xlsx|xls|doc|docx|mp4'
+                ,progress: function (value) { //上传进度回调 value进度值,由于是进度条同时又是多文件上传不只一个进度条，所以要保证每次进度条的类名不一致，demoCount控制类名，demoFlag保证上下一致，所以该方法一直在被调用
+                    setTimeout(function(){
+                        element.progress('teacher_list_demo', value + '%'); //设置页面进度条
+                    }, 500);
+                }
+                ,before: function(obj){
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function (index, file, result) {
+
+                        var size = file.size / 1024 / 1024;
+                        if(size<=1){
+                            size=keepTwoDecimal(size*1024)+'KB';
+                        }else{
+                            size=keepTwoDecimal(size)+'MB';
+                        }
+                        $('#teacher_list_Pic').find('.fileName').html(file.name);
+                        $('#teacher_list_Pic').find('.fileSize').html(size);
+                        $('#teacher_list_Pic').find('span').html('');
+                        $('#teacher_list_Pic').show();
+
+                    });
+                },
+                done: function(res){
+                    if(res.code>0){
+                        $('#video').val(res.url);
+                        return layer.msg(res.info);
+                    }else{
+                        //如果上传失败
+                        return layer.msg(res.info);
+                        element.progress('teacher_list_demo', '0%');
+                        $('#teacher_list_Pic').hide();
+                    }
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    element.progress('teacher_list_demo', '0%');
+                    var demoText = $('#teacher_list_demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span>');
+                }
+            });
+
+          
+        });
+        function keepTwoDecimal(num) {
+            var result = parseFloat(num);
+
+            result = Math.round(num * 100) / 100;
+            return result;
+        }
+    });
+
+    
+        
+    
+</script>
+</body>
+</html>

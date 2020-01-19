@@ -1,0 +1,74 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id或账号名称</label>
+            <div class="layui-input-4">
+                <input type="text" name="user" ng-model="field.user"  class="layui-input" lay-verify="require" placeholder="输入用户id或账号名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">积分</label>
+            <div class="layui-input-4">
+                <input type="number" name="integral" ng-model="field.integral" lay-verify="require" placeholder="输入需要添加或减少的积分" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                分(减分格式为英文-加数字)
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">原因</label>
+            <div class="layui-input-4">
+                <input type="text" name="reason" ng-model="field.reason" lay-verify="required" placeholder="{:lang('pleaseEnter')}积分变动的原因" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入50个字符
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{user:''};
+        layui.use(['form', 'layer','upload'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload;
+            if($scope.field.title_bg){
+                titleBg.src = $scope.field.title_bg;
+            }
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.id = $scope.field.id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+           
+        });
+    });
+</script>
+</body>
+</html>

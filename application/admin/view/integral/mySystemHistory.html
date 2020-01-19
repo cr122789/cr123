@@ -1,0 +1,64 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>考试积分详情</legend>
+    </fieldset>
+    <div class="demoTable">
+        <input style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+         操作时间:<input type="date" name="date1" id="date1" style="width:15%; border:1px solid #ADADAD;border-radius:3px; height:30px;"> &nbsp; -- &nbsp; <input type="date" name="date2" id="date2" style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;">
+         <button class="layui-btn" id="search" data-type="reload">搜索</button>
+         <a href="{:url('myTestHistory')}" class="layui-btn">显示全部</a>
+ 
+     </div>
+    
+    <input type="hidden" name="user_id" id="user_id" value="{$user_id}">
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+{include file="common/foot"/}
+<script type="text/html" id="topBtn">
+    <a href="{:url('myList')}" class="layui-btn layui-btn-sm">返回</a>
+</script>
+<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var user_id = $('#user_id').val();
+        var tableIn = table.render({
+            id: 'survey',
+            elem: '#list',
+            url: '{:url("mySystemHistory")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            where : {'user_id' : user_id},
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true,templet:'#zizeng'},
+                {field: 'username', title: '账号', width: 150},
+                {field: 'nickname', title: '昵称', width: 150},
+                {field: 'truename', title: '真实姓名', width: 150},
+                {field: 'integral', title: '积分数', width: 200},
+                {field: 'reason', title: '原因', width: 300},
+                {field: 'play_time', title: '操作时间', width: 200},
+          
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+        //搜索
+        $('#search').on('click', function() {
+            var key = $('#key').val();
+            var date1= $('#date1').val();
+            var date2= $('#date2').val();
+            var user_id=$('#user_id').val();
+            if($.trim(key)===''&&$.trim(date1)===''&&$.trim(date2)==='') {
+                layer.msg('请选择搜索项！',{icon:0});
+                return;
+            }
+            tableIn.reload({ page: {page: 1},where: {key: key,date1:date1,date2:date2,user_id:user_id}});
+        });
+    });
+</script>
+</body>
+</html>

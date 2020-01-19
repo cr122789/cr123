@@ -1,0 +1,38 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>答题成绩详情</legend>
+    </fieldset>
+    <script type="text/html" id="topBtn">
+        <a type="button" href="{:url('grade')}" class="layui-btn layui-btn-primary layui-btn-sm">{:lang('back')}</a>
+
+    </script>
+    <input type="hidden" name="user_id" id="user_id" value="{$user_id}">
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+{include file="common/foot"/}
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var user_id = $('#user_id').val();
+
+        var tableIn = table.render({
+            id: 'survey',
+            elem: '#list',
+            url: '{:url("grade_details")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            where : {'user_id' : user_id},
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true},
+                {field: 'title', title: '问卷名称', width: 500},
+                {field: 'score', title: '得分', width: 100}
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+    });
+</script>
+</body>
+</html>

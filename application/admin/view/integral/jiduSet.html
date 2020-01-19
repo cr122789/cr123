@@ -1,0 +1,49 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>季度积分设置</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否开启</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="is_open1"  lay-skin="switch" lay-text="是|否" lay-filter="is_open" {if($is_open=='1')}checked='checked'{/if}>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{is_open:'1'};
+        layui.use(['form', 'layer','upload'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload;
+            //开关
+            form.on('switch(is_open)', function(obj){
+                loading =layer.load(1, {shade: [0.1,'#fff']});
+                var is_open = obj.elem.checked===true?1:0;
+
+                $.post('{:url("isOpenJidu")}',{'is_open':is_open},function (res) {
+                    layer.close(loading);
+                    if (res.status==1) {
+                        tableIn.reload();
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                        return false;
+                    }
+                })
+            });
+            
+           
+        });
+    });
+</script>
+</body>
+</html>

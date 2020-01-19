@@ -1,0 +1,247 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+/*    #container{
+        width:200px;
+        height:200px;
+        border:1px solid #9d9d9d;
+        border-radius: 6px;
+        margin:50px auto;
+        position: relative;
+        overflow: hidden;
+    }
+    .upload-progress{
+        width:100%;
+        height:100%;
+        position: absolute;
+        top:0;
+        left:0;
+        background: rgba(0,0,0,0.5);
+        z-index: 5;
+        color:#fff;
+        line-height: 200px;
+        text-align: center;
+        display: none;
+    }
+    #uploadImage{
+        width:100%;
+        height:100%;
+        position: absolute;
+        top:0;
+        left:0;
+        z-index: 2;
+        text-align: center;
+        line-height: 200px;
+        cursor: pointer;
+    }
+    #container img{
+        width:100%;
+        position: absolute;
+        top:0;
+        left:0;
+        z-index: 1;
+    }*/
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane" lay-filter="form"  enctype="multipart/form-data">
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程名称</label>
+            <div class="layui-input-4">
+                <input type="text" name="title" ng-model="field.title" lay-verify="required" placeholder="{:lang('pleaseEnter')}课程名称" class="layui-input">
+            </div>
+            {if($title_length)}
+            <div class="layui-form-mid layui-word-aux">
+                名称在{$title_length}个字符之间。
+            </div>
+            {/if}
+        </div>
+       <div class="layui-form-item">
+            <label class="layui-form-label">所属类型</label>
+            <div class="layui-input-4">
+                <select name="type_id" lay-verify="required">
+                    <option value="">请选择所属类型</option>
+                    {volist name="type" id="vo"}
+                    <option value="{$vo.id}">{$vo.type}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">讲师</label>
+            <div class="layui-input-4">
+                <select name="teacher_id" lay-verify="required">
+                    <option value="">请选择讲师</option>
+                    {volist name="teacher" id="vo"}
+                    <option value="{$vo.id}">{$vo.teacher_name}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+         <div class="layui-form-item">
+            <label class="layui-form-label">tag标签</label>
+            <div class="layui-input-4">
+                <input type="text" name="tag_id" ng-model="field.tag_id" lay-verify="required" placeholder="{:lang('pleaseEnter')}课程标签" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                标签用‘#’隔开，格式为#标签1#标签2#标签3，标签之前不需要加空格
+            </div>
+        </div>
+       
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程缩略图</label>
+            <input type="hidden" name="video_img" id="video_img" value="{{field.video_img}}">
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-primary" id="video_imgBtn"><i class="icon icon-upload3"></i>点击上传</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="titleBg">
+                        <p id="demoText" ></p>
+                    </div>
+            </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">有无作业</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_work" ng-model="field.is_work" ng-value="1" title="有">
+                <input type="radio" name="is_work" ng-model="field.is_work" ng-value="0" checked title="无">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label" style="width: 70%">内容</label>
+            <div class="layui-input-block" style="width: 70%">
+                <script id="container" name="content" type="text/plain" style="height: 450px" >{$content|raw}</script>
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">seo标题</label>
+            <div class="layui-input-4">
+                <input type="text" name="seo_title" ng-model="field.seo_title" lay-verify="required" placeholder="{:lang('pleaseEnter')}seo标题" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入50个字符
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">seo关键词</label>
+            <div class="layui-input-4">
+                <input type="text" name="seo_key" ng-model="field.seo_key" lay-verify="required" placeholder="{:lang('pleaseEnter')}seo关键词" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入50个字符
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">seo描述</label>
+            <div class="layui-input-block">
+                <textarea name="seo_des" ng-model="field.seo_des" placeholder="{:lang('pleaseEnter')}seo描述" class="layui-textarea" style="width:50%"></textarea>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入120个字符
+            </div>
+        </div>
+        <input type="hidden" name='id' value="{$id}">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('textCourseList')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script src="/muke/public/static/common/js/jquery.2.1.1.min.js"></script>
+<script src="//cdn.staticfile.org/plupload/2.1.9/plupload.full.min.js"></script>
+<script src="//cdn.bootcss.com/plupload/2.1.9/i18n/zh_CN.js"></script>
+<script src="/muke/public/static/admin/js/qiniu.js"></script>
+<script src="/muke/public/static/ueditor/ueditor.config.js" type="text/javascript"></script>
+<script src="/muke/public/static/ueditor/ueditor.all.min.js" type="text/javascript"></script>
+<script>
+    var editor = UE.getEditor('container');
+    
+</script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{id:'',title:''};
+        layui.use(['form', 'layer','upload','element','jquery'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload,element=layui.element;
+            var info = {$info|raw};
+             form.val("form", info);
+            if($scope.field.video_img){
+                titleBg.src = 'http://video.htlocalservice.com/'+$scope.field.video_img;
+            }
+            form.on('submit(submit)', function (data) {
+        
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                // data.field.id = $scope.field.id;
+                
+                $.post("", data.field, function (res) {
+                    console.log(res);
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+
+            
+          //普通图片上传
+            var uploadInst = upload.render({
+                elem: '#video_imgBtn'
+                ,url: '{:url("UploadQiniu/upload")}'
+                ,size:1024000
+                ,exts: 'jpg|png'
+                ,before: function(obj){
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function(index, file, result){
+                        $('#titleBg').attr('src', result); //图片链接（base64）
+                    });
+                },
+                done: function(res){
+                    if(res.code>0){
+                        $url=res.url;
+                        
+                        $('#video_img').val($url);
+                    }else{
+                        //如果上传失败
+                        return layer.msg('上传失败');
+                    }
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                }
+            });
+       
+        });
+        function keepTwoDecimal(num) {
+            var result = parseFloat(num);
+
+            result = Math.round(num * 100) / 100;
+            return result;
+        }
+    });
+
+    
+        
+    
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>答题成绩</legend>
+    </fieldset>
+    <div class="demoTable">
+        <div class="layui-inline">
+            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+        </div>
+        <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        <a href="{:url('grade')}" class="layui-btn">显示全部</a>
+
+    </div>
+    <script type="text/html" id="action">
+        <a href="{:url('grade_details')}?user_id={{d.id}}" class="layui-btn layui-btn-xs">详情</a>
+    </script>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+{include file="common/foot"/}
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var tableIn = table.render({
+            id: 'survey',
+            elem: '#list',
+            url: '{:url("grade")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true},
+                {field: 'username', title: '账号', width: 200},
+                {field: 'truename', title: '姓名', width: 200},
+                {field: 'position_name', title: '所属街道', width: 200},
+                {field: 'schedule', title: '答题进度', width: 200},
+                {field: 'appraise', title: '综合评分', width: 200},
+                {width: 200, align: 'center', toolbar: '#action'}
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+        //搜索
+        $('#search').on('click', function() {
+            var key = $('#key').val();
+            if($.trim(key)==='') {
+                layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
+                return;
+            }
+            tableIn.reload({ page: {page: 1},where: {key: key}});
+        });
+    });
+</script>
+</body>
+</html>

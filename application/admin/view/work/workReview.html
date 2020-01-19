@@ -1,0 +1,72 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>待审核作业</legend>
+    </fieldset>
+    <input type="hidden" id="ogroup_id" value="{$ogroup_id}">
+    <div class="demoTable">
+        <div class="demoTable">
+            <input style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+            提交时间:<input type="date" name="date1" id="date1" style="width:15%; border:1px solid #ADADAD;border-radius:3px; height:30px;"> &nbsp; -- &nbsp; 
+            <input type="date" name="date2" id="date2" style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;">
+            <button class="layui-btn" id="search" data-type="reload">搜索</button>
+            <a href="{:url('workReview')}" class="layui-btn">显示全部</a>
+    
+        </div>
+
+    </div>
+    
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+{include file="common/foot"/}
+<script type="text/html" id="action">
+    <a href="{:url('review')}?id={{d.id}}" class="layui-btn layui-btn-xs">审核</a>
+</script>
+<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var tableIn = table.render({
+            id: 'survey',
+            elem: '#list',
+            url: '{:url("workReview")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true,templet:'#zizeng'},
+                {field: 'worktitle', title: '作业标题', width: 300},
+                {field: 'title', title: '所属课程', width: 300},
+                {field: 'username', title: '账号', width: 150},
+                {field: 'truename', title: '真实姓名', width: 150},
+                {field: 'nickname', title: '昵称', width: 150},
+                {field: 'group_name', title: '组织', width: 160},
+                {field: 'upload_time', title: '提交时间', width: 200},
+                {width: 200, align: 'center', toolbar: '#action'}
+            ]],
+            limit: 10 //每页默认显示的数量
+            ,done:function(){
+                // 隐藏列
+                if($("#ogroup_id").val() != 1 ){
+                    $(".layui-table-box").find("[data-field='group_name']").css("display","none");
+                }
+            }
+        });
+        //搜索
+        $('#search').on('click', function() {
+            var key = $('#key').val();
+            var date1= $('#date1').val();
+            var date2= $('#date2').val();
+            if($.trim(key)===''&&$.trim(date1)===''&&$.trim(date2)==='') {
+                layer.msg('请选择搜索项！',{icon:0});
+                return;
+            }
+            tableIn.reload({ page: {page: 1},where: {key: key,date1:date1,date2:date2}});
+        });
+    });
+</script>
+</body>
+</html>

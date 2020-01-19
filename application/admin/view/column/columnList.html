@@ -1,0 +1,104 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>栏目列表</legend>
+    </fieldset>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+<script type="text/html" id="action">
+    
+    <a href="{:url('columnEdit')}?id={{d.id}}" class="layui-btn layui-btn-xs">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# if(d.is_page==1){ }}
+    <a  href="{:url('pageEdit')}?column_id={{d.id}}" class="layui-btn layui-btn-xs" >修改内容</a>
+    {{# } }}
+</script>
+<script type="text/html" id="topBtn">
+    <a href="{:url('columnAdd')}" class="layui-btn layui-btn-sm">添加</a>
+</script>
+<script type="text/html" id="is_show">
+    <input type="checkbox" name="is_show" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_show" {{ d.is_show == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="order">
+    <input name="{{d.id}}" data-id="{{d.id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
+</script>
+<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+{include file="common/foot"/}
+
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var tableIn = table.render({
+            id: 'column',
+            elem: '#list',
+            url: '{:url("columnList")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true,templet:'#zizeng'},
+                {field: 'column_name', title: '栏目名称', width: 200},
+                {field: 'url', title: 'url', width: 200},
+                {field: 'sort',align: 'center',title: '{:lang("order")}', width: 120, templet: '#order', sort: true},
+                {field: 'is_show', title: '导航', width: 200,templet: '#is_show'},
+                {width: 200, align: '', toolbar: '#action'}
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+        //搜索
+       
+        table.on('tool(list)', function(obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除吗？', function(index){
+                    var loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post("{:url('columnDel')}",{id:data.id},function(res){
+                        layer.close(loading);
+                        if(res.code===1){
+                            layer.msg(res.msg,{time:1000,icon:1});
+                            tableIn.reload();
+                        }else if (res.code===2){
+                            layer.msg('该先删除该栏目下的子栏目！',{time:1000,icon:2});
+                        }else{
+                            layer.msg('操作失败！',{time:1000,icon:2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+        form.on('switch(is_show)', function(obj){
+            loading =layer.load(1, {shade: [0.1,'#fff']});
+            var id = this.value;
+            var is_open = obj.elem.checked===true?1:0;
+            $.post('{:url("isshow")}',{'id':id,'is_show':is_open},function (res) {
+                layer.close(loading);
+                if (res.status==1) {
+                    tableIn.reload();
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                    return false;
+                }
+            })
+        });
+
+        $('body').on('blur','.list_order',function() {
+            var id = $(this).attr('data-id');
+            var sort = $(this).val();
+            $.post('{:url("listOrder")}',{id:id,sort:sort},function(res){
+                if(res.code === 1){
+                    layer.msg(res.msg, {time: 1000, icon: 1});
+                    table.reload('column');
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                }
+            })
+        });
+      
+    });
+</script>
+</body>
+</html>

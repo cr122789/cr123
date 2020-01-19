@@ -1,0 +1,76 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}的问题列表</legend>
+    </fieldset>
+    <input type="hidden" name="test_id" id="test_id" value="{$test_id}">
+
+    <blockquote class="layui-elem-quote">
+        <a href="{:url('questionAddList')}?test_id={$test_id}" class="layui-btn layui-btn-sm">
+            批量添加问题
+        </a>
+        <a href="{:url('questionAdd')}?test_id={$test_id}" class="layui-btn layui-btn-sm">
+            创建新的问题
+        </a>
+        <a type="button" href="{:url('testList')}" class="layui-btn layui-btn-primary layui-btn-sm">{:lang('back')}</a>
+
+    </blockquote>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+{include file="common/foot"/}
+<script type="text/html" id="bom">
+    {{d.bomlimit}}-{{d.toplimit}}
+</script>
+<script type="text/html" id="action">
+    <a href="{:url('questionEdit')}?question_id={{d.id}}&test_id={$test_id}" class="layui-btn layui-btn-xs">{:lang('edit')}</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">{:lang('del')}</a>
+</script>
+<script type="text/html" id="score">
+    {{d.score}}分
+</script>
+<script type="text/html" id="zizeng">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    layui.use('table', function() {
+        var table = layui.table, $ = layui.jquery;
+        var test_id = $('#test_id').val();
+
+        var tableIn = table.render({
+            id: 'user',
+            elem: '#list',
+            url: '{:url("questionList")}',
+            method: 'post',
+            where : {'test_id' : test_id},
+            cols: [[
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true, sort: true,templet:'#zizeng'},
+                {field: 'question_title', title: '题目名称', width: 400},
+                {field: 'answer_num',title: '选项数量', width: 120},
+                {field: 'answer_right_num',title: '正确选项数量', width: 120},
+                {field: 'score',title: '问题分数', width: 120,templet: '#score'},
+                // {field: 'sort',title: '排序', width: 120,templet: '#sort'},
+                {width: 160, align: 'center', toolbar: '#action'}
+            ]]
+        });
+        table.on('tool(list)', function(obj){
+            var data = obj.data;
+            var test_id=$('#test_id').val();
+            if(obj.event === 'del'){
+                layer.confirm('您确定要删除该问题吗？', function(index){
+                    var loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post("{:url('questionDel')}",{question_id:data.id,test_id:test_id},function(res){
+                        layer.close(loading);
+                        if(res.code==1){
+                            layer.msg(res.msg,{time:1000,icon:1});
+                            obj.del();
+                        }else{
+                            layer.msg(res.msg,{time:1000,icon:2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+       
+    });
+</script>

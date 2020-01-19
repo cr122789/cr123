@@ -1,0 +1,95 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane" lay-filter="form"  enctype="multipart/form-data">
+        <input type="hidden" name="survey_id" value="{$survey_id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型名称</label>
+            <div class="layui-input-4">
+                <input type="text" name="type" ng-model="field.type" lay-verify="required" placeholder="{:lang('pleaseEnter')}课程类型名称" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属类型</label>
+            <div class="layui-input-4">
+                <select name="fid" lay-verify="required">
+                    <option value="">请选择所属类型</option>
+                   
+                    {if condition="$fid== '0' "}
+                    <option value="0" selected="selected">顶级类型</option>
+                    {else/}
+                    <option value="0" >顶级类型</option>
+                    {/if}
+                    {volist name="type" id="vo"}
+                    {if condition="$fid== $vo.id "}
+                    <option value="{$vo.id}" selected="selected">{$vo.type}</option>
+                    {else/}
+                    <option value="{$vo.id}" >{$vo.type}</option>
+                    {/if}
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:lang('order')}</label>
+            <div class="layui-input-4">
+                <input type="text" name="sort" ng-model="field.sort" value="" placeholder="从小到大排序" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('courseType')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script src="/muke/public/static/common/js/jquery.2.1.1.min.js"></script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{id:'',type:''};
+        layui.use(['form', 'layer','upload','element'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload,element=layui.element;
+            var info = {$info|raw};
+             form.val("form", info);
+            if($scope.field.video_img){
+                titleBg.src = $scope.field.video_img;
+            }
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.id = $scope.field.id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+
+        });
+       
+    });
+
+    
+        
+    
+</script>
+</body>
+</html>

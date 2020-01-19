@@ -1,0 +1,156 @@
+{include file="common/head"/}
+<style>
+    .right{
+        display: inline-block;
+        height: 38px;
+        line-height: 38px;
+        padding: 0 18px;
+        background-color: #009688;
+        color: #fff;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 14px;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;}
+    .no-right-color{background-color: #9bc9a6;}
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <input type="hidden" name="video_id" value="{$video_id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">问题名称</label>
+            <div class="layui-input-4">
+                <textarea type="text" name="question_title" ng-model="field.question_title" lay-verify="required" placeholder="输入问题名称" class="layui-textarea"></textarea>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                最多可写入150个字符
+            </div>
+        </div>
+        <div class="layui-form-item" id="answer">
+            <div class="layui-form-item layui-input-12" >
+                <label class="layui-form-label">问题选项</label>
+            </div>
+            {if $answers}
+                {foreach $answers as $key=>$vo }
+                    <div class="layui-form-item layui-input-12">
+                    <label class="layui-form-label">选项</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="answer[]" placeholder="输入选项内容" class="layui-input" value="{$vo.choice_text}">
+                    </div>
+                    <input type="hidden" name="is_right[]"  value="{$vo.is_right}">
+                        {if $vo.is_right == 1}
+                        <input type="button" data-method="rightInput" class="layui-btn" value="正确">
+                        {else /}
+                        <input type="button" data-method="rightInput" class="layui-btn no-right-color" value="正确">
+                        {/if}
+                    <input type="button" value="删除" data-method="delInput" class="layui-btn layui-btn-danger">
+                    </div>
+                {/foreach}
+            {/if}
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <label><input class="layui-btn addnew" type="button" data-method="addInput" value="添加新的选项"></label>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">答题时间</label>
+            <div class="layui-input-4">
+                <input type="text" name="time_node" ng-model="field.time_node" lay-verify="required"  placeholder="{:lang('pleaseEnter')}输入答题时间节点,例：  09:10  表示9分10秒出题，必须为英文符号" class="layui-input" >
+            </div>
+            <div style="color:red!important" class="layui-form-mid layui-word-aux" >
+                :必须为英文字符,否则问题将不会展示
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('questionList')}?id={$video_id}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',['$scope',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{level_id:'',level_name:'',bomlimit:'',toplimit:'',sort:50};
+        layui.use(['form', 'layer'], function () {
+            var form = layui.form, $ = layui.jquery;
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.level_id = $scope.field.level_id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            })
+            var active = {
+                addInput: function () {
+                    var newInput =
+                        '<div class="layui-form-item layui-input-12">'+
+                        '<label class="layui-form-label">选项</label>'+
+                        '<div class="layui-input-4">'+
+                        '<input type="text" name="answer[]" placeholder="输入选项内容" class="layui-input">'+
+                        '</div>'+
+                        '<input type="hidden" name="is_right[]"  value="0">'+
+                        '<input type="button" data-method="rightInput" class="layui-btn no-right-color" value="正确">'+
+                        '<input type="button" value="删除" data-method="delInput" class="layui-btn layui-btn-danger">'+
+                        '</div>';
+
+//                        '<div class="layui-form-item">\n' +
+//                        '\t<label class="layui-form-label">分间名称:</label>\n' +
+//                        '\t<div class="layui-input-inline">\n' +
+//                        '\t\t<input type="text" name="between_name" class="layui-input">\n' +
+//                        '\t</div>\n'+
+//
+//                        '\t<input type="button" value="del" data-method="delInput" class="layui-btn">\n'+
+//                        '</div>';
+                    $('#answer').append(newInput);
+                },
+                delInput: function (othis) {
+                    othis.parent().remove();
+                },
+                rightInput: function (athis) {
+                    var c = athis.attr('class');
+                    if(c == 'layui-btn no-right-color'){
+                        var allplan =$('input[name="is_right[]"]');
+
+                        // for ( var int = 0; int < allplan.length; int++) {
+                        //     if(allplan[int].value == 1){
+                        //         layer.msg("禁止多选", {time: 1800, icon: 2});return false;
+                        //     }
+                        // }
+                        athis.attr('class','layui-btn');
+                        athis.prev().val(1);
+                    }else{
+                        athis.attr('class','layui-btn no-right-color');
+                        athis.prev().val(0);
+                    }
+                }
+            };
+            //已加载完的元素用
+            $('.addnew').on('click', function () {
+                var othis = $(this), method = othis.data('method');
+                active[method].call(this, othis);
+            });
+            //动态加载元素用
+            $('#answer').on('click','.layui-btn', function () {
+                var othis = $(this), method = othis.data('method');
+                active[method].call(this, othis);
+            });
+        });
+    }]);
+</script>

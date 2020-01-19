@@ -1,0 +1,130 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane" lay-filter="form"  enctype="multipart/form-data">
+        <input type="hidden" name="survey_id" value="{$survey_id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">试卷名称</label>
+            <div class="layui-input-4">
+                <input type="text" name="title" ng-model="field.title" lay-verify="required" placeholder="{:lang('pleaseEnter')}试卷名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-4">
+               
+                <input type="text" name="time_start" id="time_start" ng-model="field.time_start"  placeholder="{:lang('pleaseEnter')}开始时间" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-4">
+                <input type="text" name="time_end" id="time_end" ng-model="field.time_end"  placeholder="{:lang('pleaseEnter')}结束时间" class="layui-input">
+            </div>
+        </div>
+        {if($ogroup_id=='1')}
+            <div class="layui-form-item">
+                <label class="layui-form-label">可见组</label>
+                <div class="layui-input-block">
+                    {volist name="ogroup" id="vo"}
+                    <input type="checkbox" name="ogroup_ids[]"  value="{$vo.id}" title="{$vo.group_name}" {if(in_array($vo.id,$ogroup_test))}checked{/if} lay-filter="choiceOne" lay-verify="required">
+                    {/volist}
+                </div>
+              </div>
+        
+        {/if}
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('testList')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>       
+        
+        
+
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script src="/muke/public/static/common/js/jquery.2.1.1.min.js"></script>
+<script type="text/javascript" src="/muke/public/static/plugins/layui/lay/modules/laydate.js"></script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{id:''};
+        layui.use(['form', 'layer','upload','element'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload,element=layui.element;
+            var info = {$info|raw};
+             form.val("form", info);
+            if($scope.field.head_img){
+                titleBg.src = $scope.field.head_img;
+            }
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.id = $scope.field.id;
+                if({$ogroup_id}=='1'){
+                    var len = $("input:checked").length;
+                    if (len < 1) {
+                        layer.msg('请至少选择一项！', { icon: 2 })
+                        layer.close(loading);
+                        return false;
+                    }
+                }
+                
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+            // 复选框
+            form.on('checkbox(choiceOne)', function (data) {
+                console.debug(data);
+                var len = $("input:checked").length;
+                if (len < 1) {
+                $(data.elem).next().attr("class", "layui-unselect layui-form-checkbox");
+                $(data.elem).prop("checked", false);
+                layer.msg('请至少选择一项！', { icon: 5 });
+                return false;
+                }
+            });
+            
+        });
+        
+       
+    });
+    
+    
+        
+    
+</script>
+<script>
+    layui.use('laydate', function(){
+      var laydate = layui.laydate;
+      
+      //执行一个laydate实例
+      laydate.render({
+        elem: '#time_start' //指定元素
+        ,type:"datetime"
+      });
+      laydate.render({
+        elem: '#time_end' //指定元素
+        ,type:"datetime"
+      });
+    });
+    </script> 
+</body>
+</html>

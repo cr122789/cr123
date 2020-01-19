@@ -1,0 +1,115 @@
+{include file="common/head"/}
+<style>
+    .layui-form-label{
+        width:160px!important;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane" lay-filter="form"  enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{$id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">作业标题</label>
+            <div class="layui-input-4">
+                <input type="text" name="worktitle" ng-model="field.worktitle" readonly  class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属课程</label>
+            <div class="layui-input-4">
+                <input type="text" name="title" ng-model="field.title" readonly  class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label" style="width: 50%">内容</label>
+            <div class="layui-input-block" style="width: 50%">
+                <script id="container" name="workcontent" type="text/plain" style="height: 400px" >{$content|raw}</script>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">得分</label>
+            <div class="layui-input-4">
+                <input type="text" name="score"  class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('workReview')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script src="/muke/public/static/common/js/jquery.2.1.1.min.js"></script>
+<script type="text/javascript" src="/muke/public/static/plugins/layui/lay/modules/laydate.js"></script>
+<script src="/muke/public/static/ueditor/ueditor.config.js" type="text/javascript"></script>
+<script src="/muke/public/static/ueditor/ueditor.all.min.js" type="text/javascript"></script>
+<script>
+    var editor = UE.getEditor('container',{
+        toolbars: [
+            []
+        ]
+    });
+    editor.ready(function() {
+        //不可编辑
+        editor.setDisabled();
+        
+    });
+    
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = '{$info|raw}'!='null'?{$info|raw}:{id:''};
+        layui.use(['form', 'layer','upload','element'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload,element=layui.element;
+            var info = {$info|raw};
+             form.val("form", info);
+            if($scope.field.head_img){
+                titleBg.src = $scope.field.head_img;
+            }
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.id = $scope.field.id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+            
+        });
+        
+       
+    });
+    
+    
+        
+    
+</script>
+<script>
+    layui.use('laydate', function(){
+      var laydate = layui.laydate;
+      
+      //执行一个laydate实例
+      laydate.render({
+        elem: '#time_start' //指定元素
+        ,type:"datetime"
+      });
+      laydate.render({
+        elem: '#time_end' //指定元素
+        ,type:"datetime"
+      });
+    });
+    </script> 
+</body>
+</html>

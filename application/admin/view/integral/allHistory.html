@@ -1,0 +1,86 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>积分记录</legend>
+    </fieldset>
+    <input type="hidden" id="ogroup_id" value="{$ogroup_id}">
+    <div class="demoTable">
+        
+        <input style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+        <select name="type"  id="type" style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;">
+            <option value="">请选择<option>
+            <option value="1">登录积分<option>
+            <option value="2">答题正确积分<option>
+            <option value="3">课程积分<option>   
+            <option value="4">课程错误积分<option>    
+            <option value="5">考试积分<option>  
+            <option value="6">其他<option>  
+            <option value="7">图文课课程积分<option> 
+            <option value="8">完善信息积分<option>  
+            <option value="9">图文作业积分<option>  
+            <option value="10">视频课程每日积分<option>      
+            <option value="11">图文课程每日积分<option>                  
+        </select>
+        操作时间:<input type="date" name="date1" id="date1" style="width:15%; border:1px solid #ADADAD;border-radius:3px; height:30px;"> &nbsp; -- &nbsp; <input type="date" name="date2" id="date2" style="width:15%;border:1px solid #ADADAD;border-radius:3px; height:30px;">
+        <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        <a href="{:url('allHistory')}" class="layui-btn">显示全部</a>
+
+    </div>
+    <input type="hidden" name="user_id" id="user_id" value="{$user_id}">
+   <script type="text/html" id="zizeng">
+        {{d.LAY_TABLE_INDEX+1}}
+    </script>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+{include file="common/foot"/}
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var user_id = $('#user_id').val();
+        var tableIn = table.render({
+            id: 'survey',
+            elem: '#list',
+            url: '{:url("allHistory")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            where : {'user_id' : user_id},
+            cols: [[
+              
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true,templet:'#zizeng'},
+                {field: 'nickname', title: '昵称', width: 150},
+                {field: 'truename', title: '真实姓名', width: 150},
+                {field: 'group_name', title: '组织', width: 160},
+                {field: 'video_title', title: '课程名称', width: 200},
+                {field: 'question_title', title: '问题名称', width: 200},
+                {field: 'test_title', title: '试卷名称', width: 200},
+                {field: 'integral', title: '积分', width: 150},
+                {field: 'type', title: '积分类型', width: 150},
+                {field: 'reason', title: '原因', width: 150},
+                {field: 'play_time', title: '操作时间', width: 200},
+             
+            ]],
+            limit: 10 //每页默认显示的数量
+            ,done:function(){
+                // 隐藏列
+                if($("#ogroup_id").val() != 1 ){
+                    $(".layui-table-box").find("[data-field='group_name']").css("display","none");
+                }
+            }
+        });
+        //搜索
+        $('#search').on('click', function() {
+            var key = $('#key').val();
+            var type= $('#type').val();
+            var date1= $('#date1').val();
+            var date2= $('#date2').val();
+            if($.trim(key)===''&&$.trim(type)===''&&$.trim(date1)===''&&$.trim(date2)==='') {
+                layer.msg('请选择搜索项！',{icon:0});
+                return;
+            }
+            tableIn.reload({ page: {page: 1},where: {key: key,type:type,date1:date1,date2:date2}});
+        });
+    });
+</script>
+</body>
+</html>

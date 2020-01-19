@@ -1,0 +1,12 @@
+{
+  "name": "社区慕课API文档",
+  "version": "0.1.0",
+  "description": "社区慕课API文档",
+  "title": "社区慕课",
+  "url" : "https://api.htlocalservice.com/muke/public/api/",
+  "sampleUrl": "https://api.htlocalservice.com/muke/public/api/",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  }
+}

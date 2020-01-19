@@ -1,0 +1,47 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>答题详情</legend>
+    </fieldset>
+    <script type="text/html" id="topBtn">
+        <a type="button" href="{:url('survey_score')}" class="layui-btn layui-btn-primary layui-btn-sm">{:lang('back')}</a>
+
+    </script>
+    <input type="hidden" name="survey_id" id="survey_id" value="{$survey_id}">
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+<script type="text/html" id="is_right">
+    {{# if(d.is_right=='0'){ }}
+    错
+    {{# }else{ }}
+    对
+    {{# } }}
+</script>
+{include file="common/foot"/}
+<script>
+    layui.use(['table','form'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery;
+        var survey_id = $('#survey_id').val();
+
+        var tableIn = table.render({
+            id: 'survey',
+            elem: '#list',
+            url: '{:url("survey_questionnaires")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            where : {'survey_id' : survey_id},
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: '{:lang("id")}', width: 80, fixed: true},
+                {field: 'question', title: '问题名称', width: 500},
+                {field: 'choice_text', title: '选择选项', width: 400},
+                {field: 'is_right', title: '答题情况', width: 100, templet:'#is_right'},
+                {field: 'score', title: '得分', width: 100}
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属用户组</label>
+            <div class="layui-input-4">
+                <select name="level" lay-verify="required" ng-model="field.level" ng-options="v.level_id as v.level_name for v in group" ng-selected="v.level_id==field.level">
+                    <option value="">请选择会员组</option>
+                </select>
+            </div>
+        </div>
+        {if($ogroup_id == 1)}
+    
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属组织</label>
+            <div class="layui-input-4">
+                <select name="ogroup_id" lay-verify="required" ng-model="field.ogroup_id" ng-options="v.id as v.group_name for v in ogroup" ng-selected="v.id==field.ogroup_id">
+                    <option value="">请选择组织</option>
+                </select>
+            </div>
+        </div>
+        {else}
+        <input type="hidden" name="ogroup_id" value="number:{$ogroup_id}">
+        {/if}
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:lang('username')}</label>
+            <div class="layui-input-4">
+                <input type="text" name="username" ng-model="field.username" lay-verify="required"  class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:lang('nickname')}</label>
+            <div class="layui-input-4">
+                <input type="text" name="nickname" ng-model="field.nickname"  placeholder="{:lang('pleaseEnter')}{:lang('nickname')}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">真实姓名</label>
+            <div class="layui-input-4">
+                <input type="text" name="truename" ng-model="field.truename"  placeholder="{:lang('pleaseEnter')}真实姓名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:lang('tel')}</label>
+            <div class="layui-input-4">
+                <input type="text" name="mobile" ng-model="field.mobile" placeholder="输入{:lang('tel')}" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                只能填写数字
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:lang('pwd')}</label>
+            <div class="layui-input-4">
+                <input type="password" name="password"  lay-verify="password" placeholder="为空表示不修改密码" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                密码必须为12到20位字符，由字母和数字组成
+            </div>
+        </div>
+       <div class="layui-form-item">
+            <label class="layui-form-label">身份证号</label>
+            <div class="layui-input-4">
+                <input type="text" name="id_card" ng-model="field.id_card" lay-verify="id_card" placeholder="输入{:lang('id_card')}" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                只能填写数字
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">政治面貌</label>
+            <div class="layui-input-4">
+                <select name="politics_status" lay-verify="required" ng-model="field.politics_status" lay-filter="politics_status" ng-options="v.id as v.name for v in politics_status" ng-selected="v.id==field.politics_status">
+                    <option value="">请选择政治面貌</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">电子邮箱</label>
+            <div class="layui-input-4">
+                <input type="text" name="email" ng-model="field.email" placeholder="输入{:lang('email')}" class="layui-input">
+            </div>
+            
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">最高学历</label>
+            <div class="layui-input-4">
+                <select name="education"  ng-model="field.education" lay-filter="marital">
+                    <option value="">请选择最高学历</option>
+                    <option value="无">无</option>
+                    <option value="初中">初中</option>
+                    <option value="高中">高中</option>
+                    <option value="职高">职高</option>
+                    <option value="中专">中专</option>
+                    <option value="大专">大专</option>
+                    <option value="本科">本科</option>
+                    <option value="硕士">硕士</option>
+                    <option value="博士">博士</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">婚育状况</label>
+            <div class="layui-input-4">
+                <select name="marital" ng-model="field.marital" lay-filter="marital">
+                    <option value="">请选择婚育状况</option>
+                    <option value="未婚">未婚</option>
+                    <option value="已婚">已婚</option>
+                    <option value="未育">未育</option>
+                    <option value="已育">已育</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:lang('address')}</label>
+            <div class="layui-input-inline">
+                <select name="province_code_id" ng-model="field.province_code_id" lay-filter="province_code_id" ng-options="v.code_id as v.position_name for v in province_code_id" ng-selected="v.code_id==field.province_code_id">
+                    <option value="">请选择省</option>
+                </select>
+            </div>
+            <div class="layui-input-inline" >
+                <select name="city_code_id" id="city_code_id"  lay-filter="city_code_id">
+                    <option value="">请选择市</option>
+                    {if ($data['city_code_id']) }
+                    <option value="{{field.city_code_id}}" selected="selected">{{field.city_name}}</option>
+                    {/if}
+                </select>
+            </div>
+            <div class="layui-input-inline" >
+                <select name="district_code_id" id="district_code_id"  lay-filter="district_code_id">
+                    <option value="">请选择县/区</option>
+                    {if ($data['district_code_id']) }
+                    <option value="{{field.district_code_id}}" selected="selected">{{field.district_name}}</option>
+                    {/if}
+                </select>
+            </div>
+            <div class="layui-input-inline" >
+                <select name="street_code_id" id="street_code_id"  lay-filter="street_code_id">
+                    <option value="">请选择街道/乡镇</option>
+                    {if ($data['street_code_id']) }
+                    <option value="{{field.street_code_id}}" selected="selected">{{field.street_name}}</option>
+                    {/if}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<script src="/muke/public/static/common/js/angular.min.js"></script>
+<script>
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = {$info|raw};
+        $scope.group = {$user_level|raw};
+        $scope.ogroup = {$ogroup|raw};
+        $scope.province_code_id = {$province|raw};
+        $scope.city_code_id = {$city|raw};
+        $scope.district_code_id = {$district|raw};
+        $scope.street_code_id = {$street|raw};
+        $scope.politics_status = {$politics_status|raw};
+        layui.use(['form', 'layer','upload'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery, upload = layui.upload;
+            form.on('select(province_code_id)', function(data) {
+                // alert('1q');
+                var pid = data.value;
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.get("{:url('getRegion')}?pid=" + pid, function (data) {
+
+                    layer.close(loading);
+                    var html='<option value="">请选择市</option>';
+                    $.each(data, function (i, value) {
+                        // alert(value.code_id);
+                        html += '<option value="'+value.code_id+'">'+value.position_name+'</option>';
+                    });
+                    $('#city_code_id').html(html);
+                    $('#district_code_id').html('<option value="">请选择县/区</option>');
+                    form.render()
+                });
+            });
+            form.on('select(city_code_id)', function(data) {
+                var pid = data.value;
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.get("{:url('getRegion1')}?pid=" + pid, function (data) {
+                    layer.close(loading);
+                    var html='<option value="">请选择县/区</option>';
+                    $.each(data, function (i, value) {
+                        html += '<option value="'+value.code_id+'">'+value.position_name+'</option>';
+                    });
+                    $('#district_code_id').html(html);
+
+                    form.render()
+                });
+            });
+            form.on('select(district_code_id)', function(data) {
+                var pid = data.value;
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.get("{:url('getRegion1')}?pid=" + pid, function (data) {
+                    layer.close(loading);
+                    var html='<option value="">请选择街道/乡镇</option>';
+                    $.each(data, function (i, value) {
+                        html += '<option value="'+value.code_id+'">'+value.position_name+'</option>';
+                    });
+                    $('#street_code_id').html(html);
+
+                    form.render()
+                });
+            });
+           
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.id = $scope.field.id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            })
+        });
+    });
+</script>
+</body>
+</html>
